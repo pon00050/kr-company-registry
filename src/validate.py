@@ -32,6 +32,7 @@ REQUIRED_COLUMNS = [
     "corp_name",
     "ticker",
     "market",
+    "is_listed",
     "bizr_no",
     "jurir_no",
     "corp_cls",
@@ -141,16 +142,21 @@ def validate(dist_dir: Path) -> bool:
     # 6. ticker format
     # -----------------------------------------------------------------------
     print("\n[5] ticker format")
+    # KRX tickers are 6 characters. Most are numeric, but SPACs and some recent
+    # listings use alphanumeric codes (e.g. 0004V0, 0015G0). Allow both.
     has_ticker = df[df["ticker"] != ""]
     bad_ticker = has_ticker[
-        has_ticker["ticker"].str.len().ne(6) | ~has_ticker["ticker"].str.isdigit()
+        has_ticker["ticker"].str.len().ne(6) | ~has_ticker["ticker"].str.isalnum()
     ]
     if len(bad_ticker):
-        _fail(f"{len(bad_ticker):,} tickers are not exactly 6 numeric digits")
+        _fail(f"{len(bad_ticker):,} tickers are not exactly 6 alphanumeric characters")
         errors += 1
         print(bad_ticker["ticker"].value_counts().head(5).to_string())
     else:
-        _pass(f"all {len(has_ticker):,} non-empty tickers are 6 numeric digits")
+        numeric = has_ticker["ticker"].str.isdigit().sum()
+        alpha = len(has_ticker) - numeric
+        _pass(f"all {len(has_ticker):,} non-empty tickers are 6 chars "
+              f"({numeric:,} numeric, {alpha:,} alphanumeric — SPACs/recent listings)")
 
     # -----------------------------------------------------------------------
     # 7. market values
@@ -168,19 +174,28 @@ def validate(dist_dir: Path) -> bool:
     # 8. bizr_no (BRN) format — where present
     # -----------------------------------------------------------------------
     print("\n[7] bizr_no (BRN) format")
-    bizr_filled = df[df["bizr_no"] != ""]
+    # Foreign companies listed on KRX (tickers starting with '9': 900xxx, 950xxx)
+    # do not have Korean 사업자등록번호. DART returns their foreign registration
+    # numbers verbatim — non-standard format is expected and not flagged as an error.
+    domestic = df[~df["ticker"].str.startswith("9")]
+    bizr_filled = domestic[domestic["bizr_no"] != ""]
+    foreign_count = df["ticker"].str.startswith("9").sum()
     if len(bizr_filled):
         bad_bizr = bizr_filled[
             bizr_filled["bizr_no"].str.len().ne(10) | ~bizr_filled["bizr_no"].str.isdigit()
         ]
         if len(bad_bizr):
-            _fail(f"{len(bad_bizr):,} bizr_no values are not 10 numeric digits")
+            _fail(f"{len(bad_bizr):,} domestic bizr_no values are not 10 numeric digits")
             errors += 1
         else:
-            _pass(f"all {len(bizr_filled):,} non-empty bizr_no values are 10 digits")
+            _pass(f"all {len(bizr_filled):,} domestic bizr_no values are 10 digits")
+    if foreign_count:
+        print(f"       NOTE: {foreign_count:,} foreign-listed companies (ticker 9xxxxx) "
+              f"excluded from format check")
+    all_filled = (df["bizr_no"] != "").sum()
     empty_bizr = (df["bizr_no"] == "").sum()
-    print(f"       filled={len(bizr_filled):,}  empty={empty_bizr:,}  "
-          f"({100*len(bizr_filled)/len(df):.1f}% coverage)")
+    print(f"       filled={all_filled:,}  empty={empty_bizr:,}  "
+          f"({100*all_filled/len(df):.1f}% coverage)")
 
     # -----------------------------------------------------------------------
     # 9. jurir_no (CRN) format — where present

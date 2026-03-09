@@ -1,27 +1,32 @@
 """
 build_crosswalk.py — Korean company identifier crosswalk builder
 
-Extracts a five-identifier table for all KOSPI/KOSDAQ/KONEX-listed companies
-from DART's company.json endpoint and writes two output artifacts:
+Extracts a five-identifier table for ALL companies that have ever had a KRX ticker
+(actively listed + delisted) from DART's company.json endpoint and writes two artifacts:
 
     data/dist/kr_corp_ids.parquet   — columnar; for programmatic use
     data/dist/kr_corp_ids.csv       — CSV; for human review and git-clonable access
+
+Coverage: ~3,900 companies (currently ~1,700 active + ~2,200 delisted).
+Delisted companies are included because investigative and historical research requires
+looking up companies that no longer trade.
 
 Output schema
 -------------
 corp_code    str   8-digit zero-padded DART identifier (permanent)
 corp_name    str   Korean legal name (as registered in DART)
-ticker       str   6-digit KRX ticker; empty string for unlisted
-market       str   KOSPI | KOSDAQ | KONEX | (empty for unlisted/ETC)
+ticker       str   6-digit KRX ticker (persists in DART after delisting)
+market       str   KOSPI | KOSDAQ | KONEX | "" (empty = corp_cls E / other)
+is_listed    bool  True if corp_cls in (Y, K, N) — actively traded as of extraction
 bizr_no      str   BRN (사업자등록번호): 10-digit, no hyphens
 jurir_no     str   CRN (법인등록번호): 13-digit, no hyphens
-corp_cls     str   Raw DART corp_cls: Y=KOSPI, K=KOSDAQ, N=KONEX, E=ETC
+corp_cls     str   Raw DART corp_cls: Y=KOSPI, K=KOSDAQ, N=KONEX, E=ETC/delisted
 extracted_at str   ISO date of extraction run (YYYY-MM-DD)
 
 Usage
 -----
-    python src/build_crosswalk.py                  # all listed companies
-    python src/build_crosswalk.py --sample 10      # smoke test (10 companies)
+    python src/build_crosswalk.py                  # all ~3,900 companies (~92 min first run)
+    python src/build_crosswalk.py --sample 10      # smoke test (10 companies, ~14s)
     python src/build_crosswalk.py --sleep 0.3      # faster (watch rate limits)
     python src/build_crosswalk.py --force          # re-fetch even if cached
 
@@ -167,7 +172,7 @@ def build(sample: int | None = None, sleep: float = 0.5, force: bool = False) ->
 
     corp_list = _fetch_corp_list(dart)
 
-    # Only process companies that have a KRX ticker (listed companies)
+    # Process all companies that have ever had a KRX ticker (active + delisted)
     listed = corp_list[corp_list["stock_code"] != ""].copy()
     if sample:
         listed = listed.head(sample)
@@ -189,6 +194,7 @@ def build(sample: int | None = None, sleep: float = 0.5, force: bool = False) ->
             "corp_name": str(row.get("corp_name", "") or "").strip(),
             "ticker": str(row["stock_code"]).strip(),
             "market": MARKET_MAP.get(corp_cls, ""),
+            "is_listed": corp_cls in ("Y", "K", "N"),
             "bizr_no": bizr_no,
             "jurir_no": jurir_no,
             "corp_cls": corp_cls,

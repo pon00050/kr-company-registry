@@ -140,6 +140,14 @@ ORDER BY k.contract_amount DESC;
 at [opendart.fss.or.kr](https://opendart.fss.or.kr/intro/main.do). The published
 `data/dist/` files require no API key to use.
 
+**Note on API over-fetching:** `company.json` returns 20 fields per company (CEO name,
+address, website, phone, fax, industry code, founding date, fiscal year-end, etc.).
+OpenDartReader provides no field-selection parameter, so the full payload is always
+returned. The raw responses are cached to `data/raw/dart/<corp_code>.json` (gitignored)
+as an artifact of this constraint — not as intentional data collection. The published
+output contains only the 8 identifier columns this project was designed to produce.
+If you run the extractor, the cache files stay local and are never committed.
+
 ---
 
 ## Running the Extractor
@@ -207,11 +215,31 @@ The crosswalk is maintained as a separate project so that:
 - **Snapshot, not temporal:** `effective_from` / `effective_to` dates for ticker
   changes on relisting or SPAC mergers are not tracked. The table is a point-in-time
   snapshot. For historical ticker histories, check KIND (한국거래소 상장법인목록) manually.
-- **Listed companies only:** This crosswalk covers companies with a KRX ticker.
-  Unlisted companies appear in DART but are excluded here.
-- **Bond ISINs are separate:** The ISIN column covers equity only (derivable from
-  ticker). Bond ISINs (for CB/BW events) are maintained separately via the FSC API
-  and are part of the kr-forensic-finance `bond_isin_map.parquet`.
+
+- **Includes delisted companies:** DART retains `stock_code` entries for companies
+  that have since been delisted. The dataset covers ~1,750 actively listed companies
+  and ~2,200 delisted ones. Use `is_listed = True` to filter to active listings only.
+
+- **SPAC and recent-listing tickers are alphanumeric:** KRX assigns 6-character
+  alphanumeric tickers (e.g. `0004V0`, `0015G0`) to SPACs (스팩) and some recently
+  listed companies. These are valid KRX identifiers. The dataset contains 35 such
+  tickers as of the March 2026 extraction. Do not assume all tickers are numeric.
+
+- **Foreign-listed companies have non-standard BRN:** KRX reserves the ticker range
+  `900xxx`–`950xxx` for foreign-incorporated companies listed on Korean exchanges
+  (~39 companies as of March 2026). These companies do not have Korean
+  사업자등록번호 (BRN). Their `bizr_no` field in DART contains their foreign
+  registration number verbatim — wrong length, potentially alphanumeric, and not
+  usable for KONEPS or customs joins. Filter them out with
+  `df[~df["ticker"].str.startswith("9")]` before any BRN-based join.
+
+- **CRN (jurir_no) is empty for ~38 foreign-listed companies:** Same population as
+  above. Korean 법인등록번호 does not apply to foreign-incorporated entities.
+
+- **Bond ISINs are separate:** Bond ISINs (for CB/BW events) are maintained
+  separately via the FSC API and are part of the kr-forensic-finance
+  `bond_isin_map.parquet`. This crosswalk does not include them.
+
 - **Court records:** CRN enables lookup in the 법원 법인등기 system, but that registry
   has no public API. Access is fee-based and manual.
 

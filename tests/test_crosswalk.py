@@ -24,6 +24,7 @@ REQUIRED_COLUMNS = [
     "corp_name",
     "ticker",
     "market",
+    "is_listed",
     "bizr_no",
     "jurir_no",
     "corp_cls",
@@ -79,9 +80,12 @@ def test_parquet_csv_row_count_match(df, df_csv):
 
 
 def test_minimum_row_count(df):
-    # KOSPI + KOSDAQ listed companies: historically 1,600–1,900
+    # Skip this check when the file is clearly a --sample run (< 100 rows).
+    # The full run produces ~3,900 rows (active + delisted); enforce ≥ 1,000.
+    if len(df) < 100:
+        pytest.skip(f"Sample run detected ({len(df)} rows) — skipping minimum row count check")
     assert len(df) >= 1_000, (
-        f"Only {len(df):,} rows — expected at least 1,000 listed companies"
+        f"Only {len(df):,} rows — expected at least 1,000 companies"
     )
 
 
@@ -123,12 +127,14 @@ def test_corp_code_no_duplicates(df):
 # ---------------------------------------------------------------------------
 
 def test_ticker_format_where_present(df):
+    # KRX tickers are 6 characters. Most are numeric, but SPACs and some recent
+    # listings use alphanumeric codes (e.g. 0004V0, 0015G0). Allow both.
     has_ticker = df[df["ticker"] != ""]
     bad = has_ticker[
-        has_ticker["ticker"].str.len().ne(6) | ~has_ticker["ticker"].str.isdigit()
+        has_ticker["ticker"].str.len().ne(6) | ~has_ticker["ticker"].str.isalnum()
     ]
     assert len(bad) == 0, (
-        f"{len(bad):,} non-empty tickers are not 6 numeric digits:\n"
+        f"{len(bad):,} non-empty tickers are not 6 alphanumeric characters:\n"
         f"{bad['ticker'].head(5).tolist()}"
     )
 
@@ -146,6 +152,8 @@ def test_market_values_valid(df):
 
 
 def test_market_distribution_plausible(df):
+    if len(df) < 100:
+        pytest.skip(f"Sample run detected ({len(df)} rows) — skipping market distribution check")
     counts = df["market"].value_counts().to_dict()
     assert counts.get("KOSDAQ", 0) >= 100, (
         f"Unexpectedly few KOSDAQ companies: {counts}"
@@ -160,14 +168,19 @@ def test_market_distribution_plausible(df):
 # ---------------------------------------------------------------------------
 
 def test_bizr_no_format_where_present(df):
-    filled = df[df["bizr_no"] != ""]
+    # Foreign companies listed on KRX do not have Korean 사업자등록번호.
+    # KRX assigns tickers starting with '9' (900xxx, 950xxx) to foreign-incorporated
+    # companies. Exclude them from the format check — their DART bizr_no entries
+    # contain foreign registration numbers in non-standard formats.
+    domestic = df[~df["ticker"].str.startswith("9")]
+    filled = domestic[domestic["bizr_no"] != ""]
     if len(filled) == 0:
-        pytest.skip("No bizr_no values present — skipping format check")
+        pytest.skip("No domestic bizr_no values present — skipping format check")
     bad = filled[
         filled["bizr_no"].str.len().ne(10) | ~filled["bizr_no"].str.isdigit()
     ]
     assert len(bad) == 0, (
-        f"{len(bad):,} bizr_no values are not 10 numeric digits:\n"
+        f"{len(bad):,} domestic bizr_no values are not 10 numeric digits:\n"
         f"{bad['bizr_no'].head(5).tolist()}"
     )
 
