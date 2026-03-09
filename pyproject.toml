@@ -1,0 +1,49 @@
+[project]
+name = "kr-company-registry"
+version = "0.1.0"
+requires-python = ">=3.11"
+description = "Open identifier crosswalk for Korean listed companies: corp_code ↔ ticker ↔ BRN ↔ CRN"
+authors = [{name = "pon00050"}]
+license = {text = "MIT"}
+readme = "README.md"
+keywords = ["kosdaq", "kospi", "dart", "korea", "open-data", "company-registry", "identifier"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Office/Business :: Financial",
+]
+dependencies = [
+    "opendartreader",
+    "pandas",
+    "pyarrow",
+    "requests",
+    "tqdm",
+    "python-dotenv",
+]
+
+[project.urls]
+Repository = "https://github.com/pon00050/kr-company-registry"
+Issues = "https://github.com/pon00050/kr-company-registry/issues"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[tool.uv]
+compile-bytecode = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]

@@ -1,0 +1,4 @@
+# Ignore everything under raw/ — API responses are not committed.
+# Re-run build_crosswalk.py to regenerate from DART.
+*
+!.gitignore

@@ -1,0 +1,36 @@
+name: Validate crosswalk
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install uv
+        run: pip install uv
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Check dist/ artifacts exist
+        run: |
+          test -f data/dist/kr_corp_ids.parquet || (echo "MISSING: data/dist/kr_corp_ids.parquet" && exit 1)
+          test -f data/dist/kr_corp_ids.csv     || (echo "MISSING: data/dist/kr_corp_ids.csv"     && exit 1)
+
+      - name: Run schema validation
+        run: uv run python src/validate.py
+
+      - name: Run pytest
+        run: uv run pytest tests/ -v

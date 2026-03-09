@@ -1,0 +1,7 @@
+# This directory holds the published crosswalk artifacts:
+#   kr_corp_ids.parquet   — machine-readable (pandas/DuckDB)
+#   kr_corp_ids.csv       — human-readable; the citable public artifact
+#
+# Run `python src/build_crosswalk.py` to generate them.
+# Once generated, both files are committed to the repo so users can
+# access them with a plain `git clone` — no Python or API key required.
