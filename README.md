@@ -7,7 +7,7 @@ incompatible silos — making KOSPI/KOSDAQ data joinable across financial filing
 procurement records, customs data, and court registries for the first time as public
 infrastructure.
 
-No Asian market has published an equivalent table. This is the first.
+To our knowledge, no publicly maintained crosswalk linking these identifiers has been released for the Korean market. Commercial vendors (FnGuide, KOSCOM, Bloomberg) hold internal versions as proprietary IP.
 
 | Stat | Value |
 |---|---|
@@ -38,7 +38,21 @@ data vendors (FnGuide, KOSCOM, Bloomberg) hold internal versions as proprietary 
 The same structural gap exists in Taiwan, Japan, and Hong Kong — no Asian market has
 solved it publicly.
 
-**This project solves it for Korea.**
+**This project provides that crosswalk for Korea as open data.**
+
+```
+DART filings          KRX market data       Tax / procurement     Corporate registry
+(corp_code)           (ticker)              (BRN 사업자등록번호)    (CRN 법인등록번호)
+      │                     │                       │                      │
+      └─────────────────────┴───────────────────────┴──────────────────────┘
+                                        │
+                              kr-company-registry
+                           (one row per company, all five identifiers linked)
+                                        │
+                      ┌─────────────────┼──────────────────┐
+                      │                 │                  │
+               DART joins          KRX joins         KONEPS / customs / registry joins
+```
 
 ---
 
