@@ -235,5 +235,5 @@ def test_csv_utf8_sig_readable(df_csv):
     # Korean company names must survive the CSV round-trip
     assert "corp_name" in df_csv.columns
     # Check that at least one row contains a Korean character
-    has_korean = df_csv["corp_name"].str.contains(r"[\uAC00-\uD7A3]", regex=True).any()
+    has_korean = df_csv["corp_name"].str.contains("[가-힣]", regex=True).any()
     assert has_korean, "No Korean characters found in corp_name — encoding may be broken"
