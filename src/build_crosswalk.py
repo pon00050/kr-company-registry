@@ -50,6 +50,8 @@ import pandas as pd
 from dotenv import load_dotenv
 from tqdm import tqdm
 
+from src.constants import CSV_FILENAME, PARQUET_FILENAME
+
 # ---------------------------------------------------------------------------
 # Paths
 # ---------------------------------------------------------------------------
@@ -209,8 +211,8 @@ def build(sample: int | None = None, sleep: float = 0.5, force: bool = False) ->
 def write_outputs(df: pd.DataFrame) -> None:
     DIST.mkdir(parents=True, exist_ok=True)
 
-    parquet_path = DIST / "kr_corp_ids.parquet"
-    csv_path = DIST / "kr_corp_ids.csv"
+    parquet_path = DIST / PARQUET_FILENAME
+    csv_path = DIST / CSV_FILENAME
 
     df.to_parquet(parquet_path, index=False)
     df.to_csv(csv_path, index=False, encoding="utf-8-sig")  # utf-8-sig for Excel compatibility

@@ -15,24 +15,17 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from src.constants import (
+    CSV_FILENAME,
+    PARQUET_FILENAME,
+    REQUIRED_COLUMNS,
+    VALID_CORP_CLS,
+    VALID_MARKETS,
+)
+
 DIST = Path(__file__).parent.parent / "data" / "dist"
-PARQUET = DIST / "kr_corp_ids.parquet"
-CSV = DIST / "kr_corp_ids.csv"
-
-REQUIRED_COLUMNS = [
-    "corp_code",
-    "corp_name",
-    "ticker",
-    "market",
-    "is_listed",
-    "bizr_no",
-    "jurir_no",
-    "corp_cls",
-    "extracted_at",
-]
-
-VALID_MARKETS = {"KOSPI", "KOSDAQ", "KONEX", ""}
-VALID_CORP_CLS = {"Y", "K", "N", "E", ""}
+PARQUET = DIST / PARQUET_FILENAME
+CSV = DIST / CSV_FILENAME
 
 
 # ---------------------------------------------------------------------------

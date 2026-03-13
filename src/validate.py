@@ -26,21 +26,13 @@ from pathlib import Path
 
 import pandas as pd
 
-
-REQUIRED_COLUMNS = [
-    "corp_code",
-    "corp_name",
-    "ticker",
-    "market",
-    "is_listed",
-    "bizr_no",
-    "jurir_no",
-    "corp_cls",
-    "extracted_at",
-]
-
-VALID_MARKETS = {"KOSPI", "KOSDAQ", "KONEX", ""}
-VALID_CORP_CLS = {"Y", "K", "N", "E", ""}
+from src.constants import (
+    CSV_FILENAME,
+    PARQUET_FILENAME,
+    REQUIRED_COLUMNS,
+    VALID_CORP_CLS,
+    VALID_MARKETS,
+)
 
 
 def _fail(msg: str) -> None:
@@ -51,11 +43,11 @@ def _pass(msg: str) -> None:
     print(f"  OK    {msg}")
 
 
-def validate(dist_dir: Path) -> bool:
+def validate(dist_dir: Path) -> tuple[bool, pd.DataFrame | None]:
     errors = 0
 
-    parquet_path = dist_dir / "kr_corp_ids.parquet"
-    csv_path = dist_dir / "kr_corp_ids.csv"
+    parquet_path = dist_dir / PARQUET_FILENAME
+    csv_path = dist_dir / CSV_FILENAME
 
     # -----------------------------------------------------------------------
     # 1. Files exist
@@ -70,7 +62,7 @@ def validate(dist_dir: Path) -> bool:
 
     if errors:
         print("\nAborting validation: output files missing.")
-        return False
+        return False, None
 
     # -----------------------------------------------------------------------
     # 2. Load both artifacts
@@ -103,7 +95,7 @@ def validate(dist_dir: Path) -> bool:
 
     if missing_cols:
         print("\nAborting: missing columns prevent further checks.")
-        return False
+        return False, None
 
     # -----------------------------------------------------------------------
     # 5. corp_code format and uniqueness
@@ -237,7 +229,47 @@ def validate(dist_dir: Path) -> bool:
         print(f"VALIDATION PASSED — {len(df):,} rows, all checks clean.")
     print("=" * 50)
 
-    return errors == 0
+    return errors == 0, df if errors == 0 else None
+
+
+def write_summary(dist_dir: Path, df: pd.DataFrame) -> None:
+    """Write data/dist/summary.md with key metrics for Obsidian embedding."""
+    listed = df[df["is_listed"]]
+    market_dist = df[df["is_listed"]]["market"].value_counts().to_dict()
+    domestic = df[~df["ticker"].str.startswith("9")]
+    foreign_count = len(df) - len(domestic)
+    bizr_filled = (domestic["bizr_no"] != "").sum()
+    jurir_filled = (df["jurir_no"] != "").sum()
+    spac_count = (
+        df["ticker"].str.isalnum() & ~df["ticker"].str.isdigit() & (df["ticker"] != "")
+    ).sum()
+    extraction_date = df["extracted_at"].iloc[0] if len(df) else "unknown"
+
+    lines = [
+        "# Crosswalk Summary",
+        "",
+        f"**Extraction date:** {extraction_date}  ",
+        f"**Total companies:** {len(df):,}  ",
+        f"**Active listed:** {len(listed):,}  ",
+        f"**Delisted (corp_cls=E):** {len(df) - len(listed):,}  ",
+        "",
+        "## Market Distribution (active)",
+        "",
+    ]
+    for mkt in ("KOSPI", "KOSDAQ", "KONEX"):
+        lines.append(f"- {mkt}: {market_dist.get(mkt, 0):,}")
+    lines += [
+        "",
+        "## Identifier Coverage",
+        "",
+        f"- BRN (`bizr_no`): {bizr_filled:,} / {len(domestic):,} domestic ({100*bizr_filled/len(domestic):.1f}%)",
+        f"- CRN (`jurir_no`): {jurir_filled:,} / {len(df):,} ({100*jurir_filled/len(df):.1f}%)",
+        f"- Foreign-listed (ticker 9xxxxx): {foreign_count:,}",
+        f"- Alphanumeric tickers (SPACs): {spac_count:,}",
+    ]
+
+    (dist_dir / "summary.md").write_text("\n".join(lines), encoding="utf-8")
+    print(f"  Written: {dist_dir / 'summary.md'}")
 
 
 def main() -> None:
@@ -247,7 +279,9 @@ def main() -> None:
                         help="Path to the dist/ directory containing output artifacts.")
     args = parser.parse_args()
 
-    ok = validate(args.dist)
+    ok, df = validate(args.dist)
+    if ok and df is not None:
+        write_summary(args.dist, df)
     sys.exit(0 if ok else 1)
 
 

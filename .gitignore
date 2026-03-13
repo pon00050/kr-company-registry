@@ -23,3 +23,11 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+# Knowledge layer (private thinking — never commit)
+knowledge/
+
+# Tool caches
+docs_cache/
+.claude/
+.obsidian/
