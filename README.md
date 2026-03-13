@@ -187,11 +187,15 @@ Re-runs from cache complete in ~10 seconds without touching the API rate limit.
 
 ## Update Cadence
 
-The crosswalk is refreshed periodically to capture:
+The crosswalk is refreshed **automatically every week** via GitHub Actions
+(Sunday 21:00 UTC = Monday 06:00 KST). Each run captures:
+
 - New listings (신규 상장)
 - Delistings (상장 폐지)
 - Corporate restructurings that change BRN
 
+The workflow fetches only new companies from the DART API (existing responses are
+cached), so each weekly run completes in seconds unless new listings have appeared.
 `extracted_at` records the date of the most recent extraction run.
 
 ---
