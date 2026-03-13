@@ -108,6 +108,26 @@ Do not include it in BRN-based joins.
 
 ---
 
+## Programmatic Access
+
+The dataset can be fetched directly from GitHub without cloning the repo:
+
+```python
+import pandas as pd
+
+# CSV (Excel, R, any tool)
+CSV_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/master/data/dist/kr_corp_ids.csv"
+df = pd.read_csv(CSV_URL)
+
+# Parquet (faster, preserves types)
+PARQUET_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/master/data/dist/kr_corp_ids.parquet"
+df = pd.read_parquet(PARQUET_URL)
+```
+
+The files update automatically every week. Check `extracted_at` to see when the data was last refreshed.
+
+---
+
 ## Quick Start
 
 ### Option A — Just use the data (no Python required)
