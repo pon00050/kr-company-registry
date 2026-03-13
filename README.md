@@ -9,6 +9,15 @@ infrastructure.
 
 No Asian market has published an equivalent table. This is the first.
 
+| Stat | Value |
+|---|---|
+| Companies covered | 3,949 (active + delisted) |
+| Active listed | 2,768 — KOSPI 841 · KOSDAQ 1,817 · KONEX 110 |
+| Delisted (included) | 1,181 |
+| BRN coverage | 100% of domestic companies |
+| CRN coverage | ~99% (foreign-incorporated companies have none) |
+| Refresh cadence | Weekly, automated (GitHub Actions) |
+
 ---
 
 ## The Problem
@@ -55,8 +64,24 @@ Both files are committed to this repository. You can access the data with a plai
 | `market` | str | `KOSPI` \| `KOSDAQ` \| `KONEX` \| `""` |
 | `bizr_no` | str | BRN (사업자등록번호): 10 digits, no hyphens. Stable unless restructured. |
 | `jurir_no` | str | CRN (법인등록번호): 13 digits, no hyphens. Permanent. |
+| `is_listed` | bool | `True` if currently listed (corp_cls ∈ Y/K/N); `False` for delisted. |
 | `corp_cls` | str | Raw DART code: `Y`=KOSPI, `K`=KOSDAQ, `N`=KONEX, `E`=ETC |
 | `extracted_at` | str | ISO date of extraction run (YYYY-MM-DD). |
+
+### Sample rows
+
+Four representative edge cases — domestic blue-chip, SPAC (alphanumeric ticker),
+foreign-listed (non-standard BRN, no CRN), and delisted:
+
+| corp_code | corp_name | ticker | market | is_listed | bizr_no | jurir_no | corp_cls |
+|---|---|---|---|---|---|---|---|
+| 00126380 | 삼성전자 | 005930 | KOSPI | True | 1248100998 | 1301110006246 | Y |
+| 00185301 | 제이피아이헬스케어 | 0010V0 | KOSDAQ | True | 2038148897 | 1101110285787 | K |
+| 00599230 | 평산차업집단유한공사 | 950010 | | False | CT114980 | | E |
+| 00100258 | 에스마크 | 030270 | | False | 3038103040 | 1511110001366 | E |
+
+Row 3 is a foreign-incorporated company: non-standard `bizr_no`, empty `jurir_no`, delisted.
+Do not include it in BRN-based joins.
 
 ### Identifier stability reference
 
@@ -119,13 +144,13 @@ ORDER BY k.contract_amount DESC;
 
 ## Who Uses This
 
-| User | What they do with it |
-|---|---|
-| **Investigative journalists** | Join DART financial data to KONEPS procurement records; trace company networks using CRN in corporate registry databases |
-| **Academic researchers** | Build panel datasets linking DART disclosures (corp_code) to KRX price/volume (ticker) to procurement patterns (BRN) |
-| **Regulators (FSS / NTS)** | Cross-system identity resolution; the same methodology the NTS used to recover ₩260B from 27 manipulation-network companies in March 2026 |
-| **Foreign institutional investors** | Map unfamiliar DART corp_codes to tradeable KRX tickers; due diligence without a Korean-language Bloomberg subscription |
-| **Compliance / KYC teams** | BRN-based matching against KONEPS exclusion lists, sanctions databases |
+| User | What they do with it | One-liner |
+|---|---|---|
+| **Investigative journalists** | Join DART financial data to KONEPS procurement records; trace company networks via CRN in corporate registry databases | `df[df["bizr_no"] == koneps_row["bizr_no"]]` |
+| **Academic researchers** | Build panel datasets linking DART disclosures (corp_code) to KRX price/volume (ticker) to procurement patterns (BRN) | `df.merge(price_df, on="ticker")` |
+| **Regulators (FSS / NTS)** | Cross-system identity resolution; the same methodology the NTS used to recover ₩260B from 27 manipulation-network companies in March 2026 | `df[df["corp_code"].isin(dart_targets)][["bizr_no","jurir_no"]]` |
+| **Foreign institutional investors** | Map unfamiliar DART corp_codes to tradeable KRX tickers; due diligence without a Korean-language Bloomberg subscription | `df[df["corp_code"] == "00126380"]["ticker"].item()` |
+| **Compliance / KYC teams** | BRN-based matching against KONEPS exclusion lists, sanctions databases | `df[df["bizr_no"].isin(sanctions_brn_list)]` |
 
 ---
 
@@ -145,7 +170,7 @@ address, website, phone, fax, industry code, founding date, fiscal year-end, etc
 OpenDartReader provides no field-selection parameter, so the full payload is always
 returned. The raw responses are cached to `data/raw/dart/<corp_code>.json` (gitignored)
 as an artifact of this constraint — not as intentional data collection. The published
-output contains only the 8 identifier columns this project was designed to produce.
+output contains only the 9 columns this project was designed to produce.
 If you run the extractor, the cache files stay local and are never committed.
 
 ---
