@@ -32,7 +32,7 @@ jobs:
       - name: Install uv and dependencies
         run: |
           pip install uv
-          uv sync
+          uv sync --extra dev
 
       - name: Restore DART cache
         uses: actions/cache@v4
