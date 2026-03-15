@@ -3,6 +3,15 @@
 Open identifier crosswalk for Korean listed companies. Links 5 company identifiers
 (DART corp code, KRX ticker, BRN, CRN, market segment) across government silos.
 
+## Ecosystem
+
+Part of the Korean forensic accounting toolkit.
+- Hub: `../forensic-accounting-toolkit/` | [GitHub](https://github.com/pon00050/forensic-accounting-toolkit)
+- Task board: https://github.com/users/pon00050/projects/1
+- Role: Foundation library
+- Depends on: none (external: DART API)
+- Consumed by: kr-forensic-finance (corp_code ↔ ticker mapping)
+
 ---
 
 ## Commands
