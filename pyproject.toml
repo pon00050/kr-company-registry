@@ -41,7 +41,7 @@ dev = [
 ]
 
 [tool.uv]
-compile-bytecode = true
+compile-bytecode = false
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
