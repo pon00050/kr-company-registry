@@ -33,7 +33,7 @@ uv run python src/build_crosswalk.py --force
 uv run python src/validate.py
 
 # Run tests
-pytest tests/
+uv run pytest tests/ -v
 ```
 
 Requires `DART_API_KEY` in `.env`. Free registration at opendart.fss.or.kr.
@@ -95,6 +95,16 @@ Key source files:
 ### Data layout
 - `data/raw/` — gitignored; reproducible via pipeline
 - `data/dist/` — committed; the deliverable
+
+---
+
+## Known Gaps
+
+| Gap | Why | Status |
+|-----|-----|--------|
+| Paths hardcoded in `build_crosswalk.py:58-60`, no `_paths.py` | Convention deviation; tests can't override paths via `tmp_path` | Unblocked — low priority |
+| `validate.yml` CI fails on fresh clone without committed `data/dist/` | Tests verify committed data, not built state | By design |
+| Test command in CLAUDE.md says `pytest tests/` (bare, no `uv run`) | Convention deviation vs ecosystem standard `uv run pytest tests/ -v` | Unblocked — fix above |
 
 ---
 
