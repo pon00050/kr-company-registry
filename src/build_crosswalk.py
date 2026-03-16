@@ -51,13 +51,7 @@ from dotenv import load_dotenv
 from tqdm import tqdm
 
 from src.constants import CSV_FILENAME, PARQUET_FILENAME
-
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
-ROOT = Path(__file__).parent.parent
-RAW_DART = ROOT / "data" / "raw" / "dart"
-DIST = ROOT / "data" / "dist"
+from src._paths import PROJECT_ROOT as ROOT, DATA_RAW_DART as RAW_DART, DATA_DIST as DIST
 
 # ---------------------------------------------------------------------------
 # DART corp_cls → human-readable market name
