@@ -15,7 +15,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
-from src.constants import (
+from kr_company_registry.constants import (
     CSV_FILENAME,
     PARQUET_FILENAME,
     REQUIRED_COLUMNS,
