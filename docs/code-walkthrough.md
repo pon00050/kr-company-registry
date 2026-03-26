@@ -93,7 +93,7 @@ The `write_summary()` function at the end produces `data/dist/summary.md` — a 
 
 The tests don't run the pipeline. They run against the **already-committed output files** in `data/dist/`. This is a deliberate design choice: the tests enforce that whatever is in the repo is valid, not that the pipeline can produce valid data from scratch.
 
-This is **contract testing** — the tests define what downstream consumers (like `kr-forensic-finance`) are allowed to rely on. If someone changes the schema or identifier format silently, the tests catch it.
+This is **contract testing** — the tests define what downstream consumers (like `krff-shell`) are allowed to rely on. If someone changes the schema or identifier format silently, the tests catch it.
 
 ### Fixtures
 
