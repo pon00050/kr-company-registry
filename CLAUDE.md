@@ -10,7 +10,7 @@ Part of the Korean forensic accounting toolkit.
 - Task board: https://github.com/users/pon00050/projects/1
 - Role: Foundation library
 - Depends on: none (external: DART API)
-- Consumed by: kr-forensic-finance (corp_code ↔ ticker mapping)
+- Consumed by: krff-shell (corp_code ↔ ticker mapping)
 
 ---
 
@@ -108,6 +108,6 @@ Key source files:
 
 ## Downstream Consumer
 
-`kr-forensic-finance` Phase 5 joins this crosswalk to KONEPS procurement data and
+`krff-shell` Phase 5 joins this crosswalk to KONEPS procurement data and
 customs records using `bizr_no` (BRN) and `jurir_no` (CRN). Foreign-listed companies
 must be excluded before those joins.

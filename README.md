@@ -259,10 +259,10 @@ cached), so each weekly run completes in seconds unless new listings have appear
 
 ---
 
-## Relationship to kr-forensic-finance
+## Relationship to krff-shell
 
 This project is the **infrastructure layer**. It is consumed by
-[kr-forensic-finance](https://github.com/pon00050/kr-forensic-finance) as a data
+[krff-shell](https://github.com/pon00050/krff-shell) as a data
 input at Phase 5, when the forensic pipeline gains BRN and CRN for joining DART
 anomaly signals to KONEPS procurement and customs records.
 
@@ -300,7 +300,7 @@ The crosswalk is maintained as a separate project so that:
   above. Korean 법인등록번호 does not apply to foreign-incorporated entities.
 
 - **Bond ISINs are separate:** Bond ISINs (for CB/BW events) are maintained
-  separately via the FSC API and are part of the kr-forensic-finance
+  separately via the FSC API and are part of the kr-dart-pipeline
   `bond_isin_map.parquet`. This crosswalk does not include them.
 
 - **Court records:** CRN enables lookup in the 법원 법인등기 system, but that registry
