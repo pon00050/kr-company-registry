@@ -21,16 +21,16 @@ Part of the Korean forensic accounting toolkit.
 uv sync
 
 # Full extraction (first run ~90 min; re-run from cache ~10s)
-uv run python src/build_crosswalk.py
+uv run python src/kr_company_registry/build_crosswalk.py
 
 # Extraction — sample mode (5 companies, for smoke testing)
-uv run python src/build_crosswalk.py --sample 5
+uv run python src/kr_company_registry/build_crosswalk.py --sample 5
 
 # Extraction — force re-fetch even if cache exists
-uv run python src/build_crosswalk.py --force
+uv run python src/kr_company_registry/build_crosswalk.py --force
 
 # Validate outputs + write data/dist/summary.md
-uv run python src/validate.py
+uv run python src/kr_company_registry/validate.py
 
 # Run tests
 uv run pytest tests/ -v
@@ -65,8 +65,8 @@ validate.py  (schema + quality checks → 18 assertions)
 ```
 
 Key source files:
-- `src/build_crosswalk.py` — extraction pipeline
-- `src/validate.py` — validation + summary generation
+- `src/kr_company_registry/build_crosswalk.py` — extraction pipeline
+- `src/kr_company_registry/validate.py` — validation + summary generation
 - `tests/test_crosswalk.py` — pytest suite
 
 ---

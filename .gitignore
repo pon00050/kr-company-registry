@@ -29,5 +29,4 @@ knowledge/
 
 # Tool caches
 docs_cache/
-.claude/
 .obsidian/
