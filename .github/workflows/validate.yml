@@ -30,7 +30,7 @@ jobs:
           test -f data/dist/kr_corp_ids.csv     || (echo "MISSING: data/dist/kr_corp_ids.csv"     && exit 1)
 
       - name: Run schema validation
-        run: uv run python src/validate.py
+        run: uv run python src/kr_company_registry/validate.py
 
       - name: Run pytest
         run: uv run pytest tests/ -v
