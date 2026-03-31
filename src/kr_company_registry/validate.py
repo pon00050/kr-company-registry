@@ -275,7 +275,7 @@ def write_summary(dist_dir: Path, df: pd.DataFrame) -> None:
 def main() -> None:
     parser = argparse.ArgumentParser(description="Validate kr_corp_ids crosswalk output.")
     parser.add_argument("--dist", type=Path,
-                        default=Path(__file__).parent.parent / "data" / "dist",
+                        default=Path(__file__).parent.parent.parent / "data" / "dist",
                         help="Path to the dist/ directory containing output artifacts.")
     args = parser.parse_args()
 
