@@ -219,16 +219,16 @@ cp .env.example .env        # add your DART_API_KEY
 uv sync
 
 # 2. Smoke test (10 companies, uses cached responses on re-run)
-python src/build_crosswalk.py --sample 10
+uv run python src/kr_company_registry/build_crosswalk.py --sample 10
 
-# 3. Full run (~1,700 companies, ~14 minutes on first run, ~10s from cache)
-python src/build_crosswalk.py
+# 3. Full run (~3,900 companies, ~90 minutes on first run, ~10s from cache)
+uv run python src/kr_company_registry/build_crosswalk.py
 
 # 4. Validate output
-python src/validate.py
+uv run python src/kr_company_registry/validate.py
 
 # 5. Run tests
-pytest tests/
+uv run pytest tests/
 ```
 
 ### Flags
@@ -285,8 +285,8 @@ The crosswalk is maintained as a separate project so that:
 
 - **SPAC and recent-listing tickers are alphanumeric:** KRX assigns 6-character
   alphanumeric tickers (e.g. `0004V0`, `0015G0`) to SPACs (스팩) and some recently
-  listed companies. These are valid KRX identifiers. The dataset contains 35 such
-  tickers as of the March 2026 extraction. Do not assume all tickers are numeric.
+  listed companies. These are valid KRX identifiers. The dataset contains 36 such
+  tickers as of the April 2026 extraction. Do not assume all tickers are numeric.
 
 - **Foreign-listed companies have non-standard BRN:** KRX reserves the ticker range
   `900xxx`–`950xxx` for foreign-incorporated companies listed on Korean exchanges

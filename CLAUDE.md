@@ -49,7 +49,7 @@ opendart.fss.or.kr
 dart.corpCode.xml          (115,421 total corps)
     │   filter: stock_code != ""
     ▼
-3,948 listed/delisted companies
+~3,900 listed/delisted companies (updated weekly)
     │
     ├── per-company: dart.company(corp_code)
     │       → 20 fields including bizr_no, jurir_no, corp_cls
@@ -61,7 +61,9 @@ data/dist/kr_corp_ids.csv       [committed]
 data/dist/summary.md            [committed, Obsidian-embeddable]
     │
     ▼
-validate.py  (schema + quality checks → 18 assertions)
+validate.py  (schema + quality checks → 13 checks)
+    ▼
+tests/test_crosswalk.py  (18 pytest tests)
 ```
 
 Key source files:

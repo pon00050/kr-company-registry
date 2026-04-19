@@ -7,7 +7,7 @@ Extracts a five-identifier table for ALL companies that have ever had a KRX tick
     data/dist/kr_corp_ids.parquet   — columnar; for programmatic use
     data/dist/kr_corp_ids.csv       — CSV; for human review and git-clonable access
 
-Coverage: ~3,900 companies (currently ~1,700 active + ~2,200 delisted).
+Coverage: ~3,900 companies (currently ~2,800 active + ~1,200 delisted).
 Delisted companies are included because investigative and historical research requires
 looking up companies that no longer trade.
 
@@ -25,9 +25,9 @@ extracted_at str   ISO date of extraction run (YYYY-MM-DD)
 
 Usage
 -----
-    python src/build_crosswalk.py                  # all ~3,900 companies (~92 min first run)
-    python src/build_crosswalk.py --sample 10      # smoke test (10 companies, ~14s)
-    python src/build_crosswalk.py --sleep 0.3      # faster (watch rate limits)
+    uv run python src/kr_company_registry/build_crosswalk.py                  # all ~3,900 companies (~90 min first run)
+    uv run python src/kr_company_registry/build_crosswalk.py --sample 10      # smoke test (10 companies, ~14s)
+    uv run python src/kr_company_registry/build_crosswalk.py --sleep 0.3      # faster (watch rate limits)
     python src/build_crosswalk.py --force          # re-fetch even if cached
 
 Rate limits

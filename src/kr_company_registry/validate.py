@@ -4,7 +4,7 @@ validate.py — Schema and quality validation for the crosswalk output artifacts
 Checks both kr_corp_ids.parquet and kr_corp_ids.csv and reports:
   - Required columns present
   - corp_code: 8-digit, no duplicates, no nulls
-  - ticker: 6-digit, no nulls in listed rows
+  - ticker: 6-char alphanumeric, no nulls in listed rows
   - bizr_no: 10-digit where present
   - jurir_no: 13-digit where present
   - Parquet and CSV row counts match
@@ -16,8 +16,8 @@ Exit codes:
 
 Usage
 -----
-    python src/validate.py                         # validate data/dist/
-    python src/validate.py --dist path/to/dist/    # custom path
+    uv run python src/kr_company_registry/validate.py                         # validate data/dist/
+    uv run python src/kr_company_registry/validate.py --dist path/to/dist/    # custom path
 """
 
 import argparse
