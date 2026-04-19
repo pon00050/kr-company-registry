@@ -116,11 +116,11 @@ The dataset can be fetched directly from GitHub without cloning the repo:
 import pandas as pd
 
 # CSV (Excel, R, any tool)
-CSV_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/master/data/dist/kr_corp_ids.csv"
+CSV_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/main/data/dist/kr_corp_ids.csv"
 df = pd.read_csv(CSV_URL)
 
 # Parquet (faster, preserves types)
-PARQUET_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/master/data/dist/kr_corp_ids.parquet"
+PARQUET_URL = "https://raw.githubusercontent.com/pon00050/kr-company-registry/main/data/dist/kr_corp_ids.parquet"
 df = pd.read_parquet(PARQUET_URL)
 ```
 
@@ -280,8 +280,8 @@ The crosswalk is maintained as a separate project so that:
   snapshot. For historical ticker histories, check KIND (한국거래소 상장법인목록) manually.
 
 - **Includes delisted companies:** DART retains `stock_code` entries for companies
-  that have since been delisted. The dataset covers ~1,750 actively listed companies
-  and ~2,200 delisted ones. Use `is_listed = True` to filter to active listings only.
+  that have since been delisted. The dataset covers 2,768 actively listed companies
+  and 1,181 delisted ones. Use `is_listed = True` to filter to active listings only.
 
 - **SPAC and recent-listing tickers are alphanumeric:** KRX assigns 6-character
   alphanumeric tickers (e.g. `0004V0`, `0015G0`) to SPACs (스팩) and some recently
