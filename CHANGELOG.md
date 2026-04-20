@@ -31,7 +31,7 @@ All notable changes to the kr-company-registry crosswalk are documented here.
 - `OpenDartReader.corp_codes` returns 115,421 total corporations; 3,948 have a non-empty `stock_code`
 - `dart.company(corp_code)` returns 20 fields per company (CEO name, address, phone, fax, industry code, founding date, fiscal year-end, etc.) — no field-selection parameter exists
 - The full JSON payload is cached to `data/raw/dart/<corp_code>.json` as an artifact of this constraint, not intentional data collection
-- The published output contains only the 8 columns this project was designed to produce
+- The published output contains only the 9 columns this project was designed to produce
 
 ### Files changed
 - `src/build_crosswalk.py` — added `is_listed` boolean; removed is_listed from market mapping logic

@@ -285,12 +285,12 @@ The crosswalk is maintained as a separate project so that:
 
 - **SPAC and recent-listing tickers are alphanumeric:** KRX assigns 6-character
   alphanumeric tickers (e.g. `0004V0`, `0015G0`) to SPACs (스팩) and some recently
-  listed companies. These are valid KRX identifiers. The dataset contains 36 such
-  tickers as of the April 2026 extraction. Do not assume all tickers are numeric.
+  listed companies. These are valid KRX identifiers. The dataset contains approximately
+  36 such tickers; count updates with each weekly refresh. Do not assume all tickers are numeric.
 
 - **Foreign-listed companies have non-standard BRN:** KRX reserves the ticker range
   `900xxx`–`950xxx` for foreign-incorporated companies listed on Korean exchanges
-  (~39 companies as of March 2026). These companies do not have Korean
+  (~39 companies; count updates with each weekly refresh). These companies do not have Korean
   사업자등록번호 (BRN). Their `bizr_no` field in DART contains their foreign
   registration number verbatim — wrong length, potentially alphanumeric, and not
   usable for KONEPS or customs joins. Filter them out with
