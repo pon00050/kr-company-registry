@@ -1,5 +1,7 @@
 # kr-company-registry
 
+**[Read the full write-up →](https://ronanwrites.vercel.app/manuals/korean-company-identifier-crosswalk)**
+
 Five Korean government agencies assign different IDs to the same company.
 This table links them — for every company listed or delisted on Korean exchanges since DART records began.
 
