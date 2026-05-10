@@ -1,14 +1,14 @@
 # Crosswalk Summary
 
-**Extraction date:** 2026-05-03  
+**Extraction date:** 2026-05-10  
 **Total companies:** 3,963  
-**Active listed:** 2,769  
-**Delisted (corp_cls=E):** 1,194  
+**Active listed:** 2,765  
+**Delisted (corp_cls=E):** 1,198  
 
 ## Market Distribution (active)
 
-- KOSPI: 839
-- KOSDAQ: 1,820
+- KOSPI: 838
+- KOSDAQ: 1,817
 - KONEX: 110
 
 ## Identifier Coverage
