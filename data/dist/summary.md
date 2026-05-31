@@ -1,6 +1,6 @@
 # Crosswalk Summary
 
-**Extraction date:** 2026-05-24  
+**Extraction date:** 2026-05-31  
 **Total companies:** 3,967  
 **Active listed:** 2,769  
 **Delisted (corp_cls=E):** 1,198  
