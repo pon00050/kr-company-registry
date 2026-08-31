@@ -1,19 +1,19 @@
 # Crosswalk Summary
 
-**Extraction date:** 2026-08-23  
-**Total companies:** 3,985  
-**Active listed:** 2,765  
-**Delisted (corp_cls=E):** 1,220  
+**Extraction date:** 2026-08-30  
+**Total companies:** 3,988  
+**Active listed:** 2,760  
+**Delisted (corp_cls=E):** 1,228  
 
 ## Market Distribution (active)
 
-- KOSPI: 833
-- KOSDAQ: 1,823
-- KONEX: 109
+- KOSPI: 832
+- KOSDAQ: 1,820
+- KONEX: 108
 
 ## Identifier Coverage
 
-- BRN (`bizr_no`): 3,945 / 3,945 domestic (100.0%)
-- CRN (`jurir_no`): 3,946 / 3,985 (99.0%)
+- BRN (`bizr_no`): 3,948 / 3,948 domestic (100.0%)
+- CRN (`jurir_no`): 3,949 / 3,988 (99.0%)
 - Foreign-listed (ticker 9xxxxx): 40
-- Alphanumeric tickers (SPACs): 56
+- Alphanumeric tickers (SPACs): 58
